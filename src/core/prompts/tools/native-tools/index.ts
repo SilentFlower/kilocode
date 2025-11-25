@@ -3,6 +3,7 @@ import askFollowupQuestion from "./ask_followup_question"
 import attemptCompletion from "./attempt_completion"
 import browser_action from "./browser_action"
 import codebase_search from "./codebase_search"
+import deleteFile from "./delete_file"
 import editFile from "./edit_file"
 import fetchInstructions from "./fetch_instructions"
 import generate_image from "./generate_image"
@@ -27,7 +28,7 @@ export default function getNativeTools(cwd: string): OpenAI.Chat.ChatCompletionT
 		attemptCompletion,
 		browser_action(),
 		codebase_search(cwd),
-		editFile,
+		deleteFile,editFile,
 		fetchInstructions,
 		execute_command(cwd),
 		generate_image(cwd),
