@@ -137,6 +137,7 @@ const KiloTaskHeader = ({
 										? getModelMaxOutputTokens({ modelId, model, settings: apiConfiguration })
 										: undefined
 								}
+								reservedResponseTokens={apiConfiguration?.reservedResponseTokens}
 							/>
 							{condenseButton}
 							<ShareButton item={currentTaskItem} disabled={buttonsDisabled} />
@@ -192,6 +193,7 @@ const KiloTaskHeader = ({
 													})
 												: undefined
 										}
+										reservedResponseTokens={apiConfiguration?.reservedResponseTokens}
 									/>
 									{condenseButton}
 								</div>

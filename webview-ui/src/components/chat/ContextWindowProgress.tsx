@@ -10,15 +10,21 @@ interface ContextWindowProgressProps {
 	contextWindow: number
 	contextTokens: number
 	maxTokens?: number
+	reservedResponseTokens?: number
 }
 
-export const ContextWindowProgress = ({ contextWindow, contextTokens, maxTokens }: ContextWindowProgressProps) => {
+export const ContextWindowProgress = ({
+	contextWindow,
+	contextTokens,
+	maxTokens,
+	reservedResponseTokens,
+}: ContextWindowProgressProps) => {
 	const { t } = useTranslation()
 
 	// Use the shared utility function to calculate all token distribution values
 	const tokenDistribution = useMemo(
-		() => calculateTokenDistribution(contextWindow, contextTokens, maxTokens),
-		[contextWindow, contextTokens, maxTokens],
+		() => calculateTokenDistribution(contextWindow, contextTokens, maxTokens, reservedResponseTokens),
+		[contextWindow, contextTokens, maxTokens, reservedResponseTokens],
 	)
 
 	// Destructure the values we need

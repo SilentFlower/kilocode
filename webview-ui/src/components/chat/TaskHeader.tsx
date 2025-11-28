@@ -253,6 +253,7 @@ const TaskHeader = ({
 																	})
 																: undefined
 														}
+														reservedResponseTokens={apiConfiguration?.reservedResponseTokens}
 													/>
 													{condenseButton}
 												</div>

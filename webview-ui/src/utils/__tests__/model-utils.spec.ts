@@ -46,4 +46,44 @@ describe("calculateTokenDistribution", () => {
 		expect(result.reservedForOutput).toBe(8192) // Uses ANTHROPIC_DEFAULT_MAX_TOKENS when no maxTokens provided
 		expect(result.availableSize).toBe(0)
 	})
+
+	it("should use reservedResponseTokens when provided", () => {
+		const contextWindow = 10000
+		const contextTokens = 5000
+		const maxTokens = 2000
+		const reservedResponseTokens = 3000
+
+		const result = calculateTokenDistribution(contextWindow, contextTokens, maxTokens, reservedResponseTokens)
+
+		// reservedResponseTokens should take priority over maxTokens
+		expect(result.reservedForOutput).toBe(reservedResponseTokens)
+		expect(result.availableSize).toBe(2000) // 10000 - 5000 - 3000
+
+		// Percentages should sum to 100%
+		expect(Math.round(result.currentPercent + result.reservedPercent + result.availablePercent)).toBe(100)
+	})
+
+	it("should fall back to maxTokens when reservedResponseTokens is not provided", () => {
+		const contextWindow = 10000
+		const contextTokens = 5000
+		const maxTokens = 2000
+
+		const result = calculateTokenDistribution(contextWindow, contextTokens, maxTokens, undefined)
+
+		expect(result.reservedForOutput).toBe(maxTokens)
+		expect(result.availableSize).toBe(3000) // 10000 - 5000 - 2000
+	})
+
+	it("should prioritize reservedResponseTokens over maxTokens", () => {
+		const contextWindow = 20000
+		const contextTokens = 5000
+		const maxTokens = 4000
+		const reservedResponseTokens = 1000 // Smaller than maxTokens
+
+		const result = calculateTokenDistribution(contextWindow, contextTokens, maxTokens, reservedResponseTokens)
+
+		// reservedResponseTokens should be used even though it's smaller
+		expect(result.reservedForOutput).toBe(reservedResponseTokens)
+		expect(result.availableSize).toBe(14000) // 20000 - 5000 - 1000
+	})
 })
