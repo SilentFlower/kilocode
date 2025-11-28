@@ -70,6 +70,7 @@ import {
 	Collapsible,
 	CollapsibleTrigger,
 	CollapsibleContent,
+	Input,
 } from "@src/components/ui"
 
 import {
