@@ -121,6 +121,13 @@ export const getModelMaxOutputTokens = ({
 	settings?: ProviderSettings
 	format?: "anthropic" | "openai" | "gemini" | "openrouter"
 }): number | undefined => {
+	// kilocode_change start - provider reserved tokens
+	// If user has set custom reserved tokens, use that value
+	if (settings?.providerReservedTokens && settings.providerReservedTokens > 0) {
+		return settings.providerReservedTokens
+	}
+	// kilocode_change end
+
 	// Check for Claude Code specific max output tokens setting
 	if (settings?.apiProvider === "claude-code") {
 		return settings.claudeCodeMaxOutputTokens || CLAUDE_CODE_DEFAULT_MAX_OUTPUT_TOKENS

@@ -544,6 +544,11 @@
 			"unlimitedDescription": "Unlimited retries enabled (auto-proceed). The dialog will never appear.",
 			"warning": "⚠️ Setting to 0 allows unlimited retries which may consume significant API usage"
 		},
+		"providerReservedTokens": {
+			"label": "Reserved Output Tokens",
+			"description": "Custom number of tokens reserved for model response output. Leave empty to use model default.",
+			"placeholder": "e.g. 8192"
+		},
 		"reasoningEffort": {
 			"label": "Model Reasoning Effort",
 			"none": "None",
