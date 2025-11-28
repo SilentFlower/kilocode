@@ -14,6 +14,55 @@ describe("getModelMaxOutputTokens", () => {
 		supportsPromptCache: true,
 	}
 
+	// kilocode_change start - provider reserved tokens tests
+	test("should return providerReservedTokens when set", () => {
+		const settings: ProviderSettings = {
+			apiProvider: "anthropic",
+			providerReservedTokens: 16000,
+		}
+
+		const result = getModelMaxOutputTokens({
+			modelId: "claude-3-5-sonnet-20241022",
+			model: mockModel,
+			settings,
+		})
+
+		expect(result).toBe(16000)
+	})
+
+	test("should ignore providerReservedTokens when set to 0", () => {
+		const settings: ProviderSettings = {
+			apiProvider: "anthropic",
+			providerReservedTokens: 0,
+		}
+
+		const result = getModelMaxOutputTokens({
+			modelId: "claude-3-5-sonnet-20241022",
+			model: mockModel,
+			settings,
+		})
+
+		// Should fall back to model's maxTokens
+		expect(result).toBe(8192)
+	})
+
+	test("should prioritize providerReservedTokens over claude-code settings", () => {
+		const settings: ProviderSettings = {
+			apiProvider: "claude-code",
+			claudeCodeMaxOutputTokens: 16384,
+			providerReservedTokens: 20000,
+		}
+
+		const result = getModelMaxOutputTokens({
+			modelId: "claude-3-5-sonnet-20241022",
+			model: mockModel,
+			settings,
+		})
+
+		expect(result).toBe(20000)
+	})
+	// kilocode_change end
+
 	test("should return claudeCodeMaxOutputTokens when using claude-code provider", () => {
 		const settings: ProviderSettings = {
 			apiProvider: "claude-code",

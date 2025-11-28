@@ -132,6 +132,7 @@ import { TodoListSettingsControl } from "./TodoListSettingsControl"
 import { TemperatureControl } from "./TemperatureControl"
 import { RateLimitSecondsControl } from "./RateLimitSecondsControl"
 import { ConsecutiveMistakeLimitControl } from "./ConsecutiveMistakeLimitControl"
+import { ReservedTokensControl } from "./ReservedTokensControl" // kilocode_change
 import { ToolUseControl } from "./kilocode/ToolUseControl" // kilocode_change
 import { BedrockCustomArn } from "./providers/BedrockCustomArn"
 import { KiloCode } from "../kilocode/settings/providers/KiloCode" // kilocode_change
@@ -1020,6 +1021,12 @@ const ApiOptions = ({
 							}
 							onChange={(value) => setApiConfigurationField("consecutiveMistakeLimit", value)}
 						/>
+						{/* kilocode_change start - provider reserved tokens */}
+						<ReservedTokensControl
+							value={apiConfiguration.providerReservedTokens}
+							onChange={(value) => setApiConfigurationField("providerReservedTokens", value)}
+						/>
+						{/* kilocode_change end */}
 						{/* kilocode_change start
 						selectedProvider === "openrouter" &&
 							openRouterModelProviders &&

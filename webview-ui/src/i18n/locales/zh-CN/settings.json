@@ -504,6 +504,11 @@
 			"unlimitedDescription": "已启用无限重试（自动继续）。对话框将永远不会出现。",
 			"warning": "⚠️ 设置为 0 允许无限重试，这可能会消耗大量 API 使用量"
 		},
+		"providerReservedTokens": {
+			"label": "保留输出 Token 数",
+			"description": "自定义为模型响应输出保留的 Token 数量。留空则使用模型默认值。",
+			"placeholder": "例如 8192"
+		},
 		"reasoningEffort": {
 			"label": "模型推理强度",
 			"none": "无",

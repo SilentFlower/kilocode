@@ -205,6 +205,11 @@ const baseProviderSettingsSchema = z.object({
 	modelMaxTokens: z.number().optional(),
 	modelMaxThinkingTokens: z.number().optional(),
 
+	// kilocode_change start - provider reserved tokens
+	// Custom reserved tokens for response output (overrides model default)
+	providerReservedTokens: z.number().optional(),
+	// kilocode_change end
+
 	// Model verbosity.
 	verbosity: verbosityLevelsSchema.optional(),
 
