@@ -768,7 +768,12 @@
 		}
 	},
 	"advancedSettings": {
-		"title": "高级设置"
+		"title": "高级设置",
+		"reservedResponseTokens": {
+			"label": "预留响应 Token 数",
+			"placeholder": "自动（使用模型最大输出 Token）",
+			"description": "覆盖为模型响应预留的 Token 数量。留空则使用模型默认的最大输出 Token 数。"
+		}
 	},
 	"advanced": {
 		"diff": {

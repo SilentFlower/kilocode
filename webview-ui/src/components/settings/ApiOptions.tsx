@@ -977,6 +977,26 @@ const ApiOptions = ({
 							}
 							onChange={(value) => setApiConfigurationField("consecutiveMistakeLimit", value)}
 						/>
+						{/* kilocode_change start - Reserved Response Tokens */}
+						<div className="flex flex-col gap-1">
+							<label className="block font-medium">
+								{t("settings:advancedSettings.reservedResponseTokens.label")}
+							</label>
+							<Input
+								type="number"
+								min={1}
+								value={apiConfiguration.reservedResponseTokens || ""}
+								placeholder={t("settings:advancedSettings.reservedResponseTokens.placeholder")}
+								onChange={(e) => {
+									const value = e.target.value ? parseInt(e.target.value, 10) : undefined
+									setApiConfigurationField("reservedResponseTokens", value)
+								}}
+							/>
+							<p className="text-xs text-vscode-descriptionForeground">
+								{t("settings:advancedSettings.reservedResponseTokens.description")}
+							</p>
+						</div>
+						{/* kilocode_change end - Reserved Response Tokens */}
 						{/* kilocode_change start
 						selectedProvider === "openrouter" &&
 							openRouterModelProviders &&

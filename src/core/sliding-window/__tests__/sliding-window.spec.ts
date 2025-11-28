@@ -1244,4 +1244,131 @@ describe("Sliding Window", () => {
 			expect(result2.messages.length).toBe(3) // Truncated with 0.5 fraction
 		})
 	})
+
+	/**
+		* Tests for reservedResponseTokens functionality
+		*/
+	describe("reservedResponseTokens", () => {
+		const createModelInfo = (contextWindow: number, maxTokens?: number): ModelInfo => ({
+			contextWindow,
+			supportsPromptCache: true,
+			maxTokens,
+		})
+
+		const messages: ApiMessage[] = [
+			{ role: "user", content: "First message" },
+			{ role: "assistant", content: "Second message" },
+			{ role: "user", content: "Third message" },
+			{ role: "assistant", content: "Fourth message" },
+			{ role: "user", content: "Fifth message" },
+		]
+
+		/**
+			* Test that custom reservedResponseTokens is used when provided
+			*/
+		it("should use custom reservedResponseTokens when provided", async () => {
+			const modelInfo = createModelInfo(100000, 30000)
+			const customReservedTokens = 50000 // Much larger than default
+
+			// With contextWindow=100000, buffer=10%, customReservedTokens=50000
+			// allowedTokens = 100000 * 0.9 - 50000 = 40000
+			// So tokens above 40000 should trigger truncation
+			const totalTokens = 40001 // Just above threshold with custom reserved tokens
+
+			const messagesWithSmallContent = [
+				...messages.slice(0, -1),
+				{ ...messages[messages.length - 1], content: "" },
+			]
+
+			const result = await truncateConversationIfNeeded({
+				messages: messagesWithSmallContent,
+				totalTokens,
+				contextWindow: modelInfo.contextWindow,
+				maxTokens: modelInfo.maxTokens,
+				reservedResponseTokens: customReservedTokens,
+				apiHandler: mockApiHandler,
+				autoCondenseContext: false,
+				autoCondenseContextPercent: 100,
+				systemPrompt: "System prompt",
+				taskId,
+				profileThresholds: {},
+				currentProfileId: "default",
+			})
+
+			// Should truncate because we're above the threshold with custom reserved tokens
+			expect(result.messages.length).toBe(3) // Truncated with 0.5 fraction
+		})
+
+		/**
+			* Test that maxTokens is used when reservedResponseTokens is not provided
+			*/
+		it("should fall back to maxTokens when reservedResponseTokens is not provided", async () => {
+			const modelInfo = createModelInfo(100000, 30000)
+
+			// With contextWindow=100000, buffer=10%, maxTokens=30000
+			// allowedTokens = 100000 * 0.9 - 30000 = 60000
+			// So tokens below 60000 should NOT trigger truncation
+			const totalTokens = 59999 // Just below threshold with default maxTokens
+
+			const messagesWithSmallContent = [
+				...messages.slice(0, -1),
+				{ ...messages[messages.length - 1], content: "" },
+			]
+
+			const result = await truncateConversationIfNeeded({
+				messages: messagesWithSmallContent,
+				totalTokens,
+				contextWindow: modelInfo.contextWindow,
+				maxTokens: modelInfo.maxTokens,
+				// reservedResponseTokens not provided
+				apiHandler: mockApiHandler,
+				autoCondenseContext: false,
+				autoCondenseContextPercent: 100,
+				systemPrompt: "System prompt",
+				taskId,
+				profileThresholds: {},
+				currentProfileId: "default",
+			})
+
+			// Should NOT truncate because we're below the threshold
+			expect(result.messages).toEqual(messagesWithSmallContent)
+		})
+
+		/**
+			* Test that reservedResponseTokens takes priority over maxTokens
+			*/
+		it("should prioritize reservedResponseTokens over maxTokens", async () => {
+			const modelInfo = createModelInfo(100000, 30000)
+			const customReservedTokens = 10000 // Smaller than maxTokens
+
+			// With contextWindow=100000, buffer=10%, customReservedTokens=10000
+			// allowedTokens = 100000 * 0.9 - 10000 = 80000
+			// With maxTokens=30000, allowedTokens would be 60000
+			// So tokens between 60000-80000 should NOT truncate with custom reserved tokens
+			const totalTokens = 70000 // Above maxTokens threshold but below custom threshold
+
+			const messagesWithSmallContent = [
+				...messages.slice(0, -1),
+				{ ...messages[messages.length - 1], content: "" },
+			]
+
+			const result = await truncateConversationIfNeeded({
+				messages: messagesWithSmallContent,
+				totalTokens,
+				contextWindow: modelInfo.contextWindow,
+				maxTokens: modelInfo.maxTokens,
+				reservedResponseTokens: customReservedTokens,
+				apiHandler: mockApiHandler,
+				autoCondenseContext: false,
+				autoCondenseContextPercent: 100,
+				systemPrompt: "System prompt",
+				taskId,
+				profileThresholds: {},
+				currentProfileId: "default",
+			})
+
+			// Should NOT truncate because custom reserved tokens gives us more room
+			expect(result.messages).toEqual(messagesWithSmallContent)
+		})
+	})
 })

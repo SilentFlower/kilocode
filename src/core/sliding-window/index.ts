@@ -68,6 +68,7 @@ type TruncateOptions = {
 	totalTokens: number
 	contextWindow: number
 	maxTokens?: number | null
+	reservedResponseTokens?: number
 	apiHandler: ApiHandler
 	autoCondenseContext: boolean
 	autoCondenseContextPercent: number
@@ -93,6 +94,7 @@ export async function truncateConversationIfNeeded({
 	totalTokens,
 	contextWindow,
 	maxTokens,
+	reservedResponseTokens,
 	apiHandler,
 	autoCondenseContext,
 	autoCondenseContextPercent,
@@ -106,7 +108,8 @@ export async function truncateConversationIfNeeded({
 	let error: string | undefined
 	let cost = 0
 	// Calculate the maximum tokens reserved for response
-	const reservedTokens = maxTokens || ANTHROPIC_DEFAULT_MAX_TOKENS
+	// Priority: user-defined reservedResponseTokens > model maxTokens > default
+	const reservedTokens = reservedResponseTokens || maxTokens || ANTHROPIC_DEFAULT_MAX_TOKENS
 
 	// Estimate tokens for the last message (which is always a user message)
 	const lastMessage = messages[messages.length - 1]

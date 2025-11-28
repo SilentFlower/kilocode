@@ -797,7 +797,12 @@
 		}
 	},
 	"advancedSettings": {
-		"title": "Advanced settings"
+		"title": "Advanced settings",
+		"reservedResponseTokens": {
+			"label": "Reserved Response Tokens",
+			"placeholder": "Auto (uses model max tokens)",
+			"description": "Override the number of tokens reserved for model responses. Leave empty to use the model's default max output tokens."
+		}
 	},
 	"advanced": {
 		"diff": {
