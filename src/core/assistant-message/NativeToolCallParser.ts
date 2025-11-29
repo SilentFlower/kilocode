@@ -81,7 +81,7 @@ export class NativeToolCallParser {
 			switch (toolCall.name) {
 				case "read_file":
 					if (args.files && Array.isArray(args.files)) {
-						nativeArgs = { files: args.files } as NativeArgsFor<TName>
+						nativeArgs = { files: args.files.map(parseFileEntry) } as NativeArgsFor<TName>
 					}
 					break
 
@@ -311,4 +311,22 @@ export class NativeToolCallParser {
 			return null
 		}
 	}
+}
+
+/**
+	* Parse a file entry from native tool format to internal format.
+	* Converts line_ranges (string[]) to lineRanges (LineRange[]).
+	*/
+function parseFileEntry(file: { path: string; line_ranges?: string[] | null }): FileEntry {
+	const entry: FileEntry = { path: file.path }
+	if (file.line_ranges) {
+		entry.lineRanges = []
+		for (const range of file.line_ranges) {
+			const match = range.match(/(\d+)-(\d+)/)
+			if (match) {
+				entry.lineRanges.push({ start: Number(match[1]), end: Number(match[2]) })
+			}
+		}
+	}
+	return entry
 }
